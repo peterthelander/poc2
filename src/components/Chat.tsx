@@ -83,7 +83,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+      <div className="flex-1 overflow-y-auto space-y-4 pb-4 pb-28">
         {messages.map((m, i) => (
           <MessageBubble
             key={m.id}

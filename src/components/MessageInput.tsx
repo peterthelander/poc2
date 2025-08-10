@@ -48,7 +48,7 @@ export default function MessageInput({ value, onChange, onSend, onStop, streamin
         e.preventDefault()
         onSend()
       }}
-      className="sticky bottom-0 bg-white dark:bg-neutral-900 pt-2 px-2 pb-[max(env(safe-area-inset-bottom),0px)]"
+      className="sticky bottom-12 bg-white dark:bg-neutral-900 pt-2 px-2 pb-[max(env(safe-area-inset-bottom),0px)]"
     >
       <div className="flex items-end gap-2 w-full overflow-hidden">
         <div className="flex-1 min-w-0 flex flex-col">
