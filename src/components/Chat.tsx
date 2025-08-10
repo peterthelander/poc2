@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { mockChat } from '../services/llm'
+import { chat } from '../services/llm'
 import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
 import { log } from '../lib/debug'
@@ -59,8 +59,8 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
       setStreaming(true)
       const controller = new AbortController()
       controllerRef.current = controller
-      try {
-        for await (const ev of mockChat(content, { signal: controller.signal })) {
+        try {
+          for await (const ev of chat(content, { signal: controller.signal })) {
           if ('token' in ev) {
             setMessages(m =>
               m.map(msg =>
