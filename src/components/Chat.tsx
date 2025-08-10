@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { chat } from '../services/llm'
+import { chat, systemPrompt } from '../services/llm'
 import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
 import { log } from '../lib/debug'
@@ -52,6 +52,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
     const content = input.trim()
     if (!content || streaming) return
     try {
+      const history = messages.slice(-6).map(m => ({ role: m.role, content: m.text }))
       const userMsg: Message = { id: uuid(), role: 'user', text: content, ts: Date.now() }
       const assistantMsg: Message = { id: uuid(), role: 'assistant', text: '', ts: Date.now() }
       setMessages(m => [...m, userMsg, assistantMsg])
@@ -60,7 +61,11 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
       const controller = new AbortController()
       controllerRef.current = controller
         try {
-          for await (const ev of chat(content, { signal: controller.signal })) {
+          for await (const ev of chat(content, {
+            signal: controller.signal,
+            system: systemPrompt(),
+            history,
+          })) {
           if ('token' in ev) {
             setMessages(m =>
               m.map(msg =>
