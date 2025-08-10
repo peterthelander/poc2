@@ -79,6 +79,7 @@ export default function MessageInput({ value, onChange, onSend, onStop, streamin
           </button>
         )}
       </div>
+      <p className="mt-2 text-center text-xs text-neutral-500 dark:text-neutral-400">Not medical advice. In an emergency, call local services.</p>
     </form>
   )
 }
