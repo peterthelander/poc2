@@ -54,19 +54,19 @@ export default function MessageInput({ value, onChange, onSend, onStop, streamin
         <textarea
           ref={textareaRef}
           aria-label="Message"
-          className="flex-1 min-w-0 resize-none rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-3 text-sm md:text-base text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-48 overflow-y-auto"
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKey}
-          disabled={streaming}
-          rows={1}
+            className="flex-1 min-w-0 resize-none rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-3 text-base md:text-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-48 overflow-y-auto"
+            value={value}
+            onChange={handleChange}
+            onKeyDown={handleKey}
+            disabled={streaming}
+            rows={1}
         />
         {streaming ? (
           <button
             type="button"
             onClick={onStop}
             aria-label="Stop generation"
-            className="h-11 px-4 rounded-md bg-red-600 text-white shrink-0"
+            className="h-11 px-4 rounded-md bg-red-600 text-white text-base shrink-0"
           >
             Stop
           </button>
@@ -76,7 +76,7 @@ export default function MessageInput({ value, onChange, onSend, onStop, streamin
             onClick={onSend}
             aria-label="Send"
             disabled={!value.trim()}
-            className="h-11 px-4 rounded-md bg-blue-600 text-white disabled:opacity-50 shrink-0"
+            className="h-11 px-4 rounded-md bg-blue-600 text-white text-base disabled:opacity-50 shrink-0"
           >
             Send
           </button>
