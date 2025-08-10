@@ -4,6 +4,8 @@ import Chat, { ChatHandle } from './components/Chat'
 import { getTheme, toggleTheme } from './lib/theme'
 import { COMMIT_SHA, BUILD_TIME } from './lib/version'
 import DebugOverlay from './components/DebugOverlay'
+import AboutModal from './components/AboutModal'
+import PrivacyModal from './components/PrivacyModal'
 
 export default function App() {
   const chatRef = useRef<ChatHandle>(null)
@@ -45,18 +47,8 @@ export default function App() {
         <button onClick={() => setPrivacyOpen(true)} className="underline">Privacy</button> • v0.1{' '}
         <small className="opacity-75">• {COMMIT_SHA} • {new Date(BUILD_TIME).toLocaleString()}</small>
       </footer>
-      <dialog open={aboutOpen} onClose={() => setAboutOpen(false)} className="p-4 rounded-md max-w-sm w-full">
-        <p className="mb-2">AidKit POC2 v0.1</p>
-        <form method="dialog">
-          <button className="underline text-blue-600">Close</button>
-        </form>
-      </dialog>
-      <dialog open={privacyOpen} onClose={() => setPrivacyOpen(false)} className="p-4 rounded-md max-w-sm w-full">
-        <p className="mb-2">POC2: no data leaves your browser.</p>
-        <form method="dialog">
-          <button className="underline text-blue-600">Close</button>
-        </form>
-      </dialog>
+      <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
+      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
       <DebugOverlay />
     </div>
   )
