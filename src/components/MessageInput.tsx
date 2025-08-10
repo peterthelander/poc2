@@ -60,7 +60,7 @@ export default function MessageInput({ value, onChange, onSend, onStop, streamin
             Stop
           </button>
         ) : (
-          <button type="submit" aria-label="Send" disabled={!value.trim()} className="h-11 px-4 rounded-md bg-blue-600 text-white disabled:opacity-50">
+          <button type="submit" onClick={onSend} aria-label="Send" disabled={!value.trim()} className="h-11 px-4 rounded-md bg-blue-600 text-white disabled:opacity-50">
             Send
           </button>
         )}
