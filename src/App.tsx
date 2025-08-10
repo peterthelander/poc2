@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import './app.css'
 import Chat, { ChatHandle } from './components/Chat'
 import { Theme, getTheme, setTheme, applyTheme } from './lib/theme'
+import { COMMIT_SHA, BUILD_TIME } from './lib/version'
 
 export default function App() {
   const chatRef = useRef<ChatHandle>(null)
@@ -43,7 +44,8 @@ export default function App() {
       </main>
       <footer className="fixed bottom-0 left-0 right-0 text-xs text-center text-neutral-500 dark:text-neutral-400 py-2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border-t">
         <button onClick={() => setAboutOpen(true)} className="underline">About</button> •{' '}
-        <button onClick={() => setPrivacyOpen(true)} className="underline">Privacy</button> • v0.1
+        <button onClick={() => setPrivacyOpen(true)} className="underline">Privacy</button> • v0.1{' '}
+        <small className="opacity-75">• {COMMIT_SHA} • {new Date(BUILD_TIME).toLocaleString()}</small>
       </footer>
       <dialog open={aboutOpen} onClose={() => setAboutOpen(false)} className="p-4 rounded-md max-w-sm w-full">
         <p className="mb-2">AidKit POC2 v0.1</p>
