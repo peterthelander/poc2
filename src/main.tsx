@@ -3,9 +3,14 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { initTheme } from './lib/theme'
+import { isDebug, log } from './lib/debug'
 
-window.addEventListener('error', e => console.log('window error:', e.message))
-window.addEventListener('unhandledrejection', e => console.log('promise rejection:', e.reason))
+if (isDebug()) {
+  window.addEventListener('error', e => log(`error: ${e.message}`))
+  window.addEventListener('unhandledrejection', e =>
+    log(`unhandled: ${e.reason?.message || e.reason}`)
+  )
+}
 
 initTheme()
 

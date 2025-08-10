@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import { mockChat } from '../services/llm'
 import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
+import { log } from '../lib/debug'
 import MessageBubble from './MessageBubble'
 import MessageInput from './MessageInput'
 
@@ -75,6 +76,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
         controllerRef.current = undefined
       }
     } catch (err) {
+      log(err)
       console.error(err)
     }
   }
