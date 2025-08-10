@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { chat, systemPrompt } from '../services/llm'
+import { chat, systemPrompt, ERROR_TOKEN } from '../services/llm'
 import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
 import { log } from '../lib/debug'
@@ -86,6 +86,53 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
     }
   }
 
+  const retry = async () => {
+    const last = messages[messages.length - 1]
+    const prev = messages[messages.length - 2]
+    if (
+      streaming ||
+      !last ||
+      last.role !== 'assistant' ||
+      last.text !== ERROR_TOKEN ||
+      !prev ||
+      prev.role !== 'user'
+    )
+      return
+    try {
+      const history = messages
+        .slice(0, -2)
+        .slice(-6)
+        .map(m => ({ role: m.role, content: m.text }))
+      setMessages(m => m.map(msg => (msg.id === last.id ? { ...msg, text: '' } : msg)))
+      setStreaming(true)
+      const controller = new AbortController()
+      controllerRef.current = controller
+      try {
+        for await (const ev of chat(prev.text, {
+          signal: controller.signal,
+          system: systemPrompt(),
+          history,
+        })) {
+          if ('token' in ev) {
+            setMessages(m =>
+              m.map(msg =>
+                msg.id === last.id
+                  ? { ...msg, text: msg.text + (msg.text ? ' ' : '') + ev.token }
+                  : msg
+              )
+            )
+          }
+        }
+      } finally {
+        setStreaming(false)
+        controllerRef.current = undefined
+      }
+    } catch (err) {
+      log(err)
+      console.error(err)
+    }
+  }
+
   const stop = () => controllerRef.current?.abort()
 
   return (
@@ -99,6 +146,15 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
             isStreaming={streaming && i === messages.length - 1 && m.role === 'assistant'}
           />
         ))}
+        {!streaming &&
+          messages[messages.length - 1]?.role === 'assistant' &&
+          messages[messages.length - 1]?.text === ERROR_TOKEN && (
+            <div className="flex justify-center">
+              <button className="text-sm text-blue-500 underline" onClick={retry}>
+                Retry
+              </button>
+            </div>
+          )}
         <div ref={bottomRef} />
       </div>
       <MessageInput

@@ -22,6 +22,8 @@ export async function* mockChat(
   }
 }
 
+export const ERROR_TOKEN = '⚠️ The service is busy. Please try again.'
+
 export async function* apiChat(
   prompt: string,
   opts?: {
@@ -36,36 +38,49 @@ export async function* apiChat(
     { role: 'user', content: prompt },
   ].filter(Boolean) as { role: string; content: string }[]
 
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
-    signal: opts?.signal,
-  })
-  if (!res.ok || !res.body) {
-    yield { token: `⚠️ API ${res.status}` }
-    yield { done: true }
-    return
+  let controller: AbortController | undefined
+  let signal = opts?.signal
+  if (!signal) {
+    controller = new AbortController()
+    signal = controller.signal
+    setTimeout(() => controller?.abort(), 30_000)
   }
-  const reader = res.body.getReader()
-  const decoder = new TextDecoder()
-  let buffer = ''
-  while (true) {
-    if (opts?.signal?.aborted) break
-    const { value, done } = await reader.read()
-    if (done) break
-    buffer += decoder.decode(value, { stream: true })
-    const parts = buffer.split(/\s+/)
-    buffer = parts.pop() ?? ''
-    for (const token of parts) {
-      if (opts?.signal?.aborted) break
-      if (token) yield { token }
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages }),
+      signal,
+    })
+    if (!res.ok || !res.body) {
+      yield { token: ERROR_TOKEN }
+      yield { done: true }
+      return
     }
-  }
-  if (!opts?.signal?.aborted) {
-    if (buffer) {
-      yield { token: buffer }
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    while (true) {
+      if (signal?.aborted) break
+      const { value, done } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      const parts = buffer.split(/\s+/)
+      buffer = parts.pop() ?? ''
+      for (const token of parts) {
+        if (signal?.aborted) break
+        if (token) yield { token }
+      }
     }
+    if (!signal?.aborted) {
+      if (buffer) {
+        yield { token: buffer }
+      }
+      yield { done: true }
+    }
+  } catch {
+    yield { token: ERROR_TOKEN }
     yield { done: true }
   }
 }
