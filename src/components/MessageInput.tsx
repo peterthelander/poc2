@@ -34,6 +34,14 @@ export default function MessageInput({ value, onChange, onSend, onStop, streamin
     resize()
   }, [value])
 
+  useEffect(() => {
+    if (!streaming) textareaRef.current?.focus()
+  }, [streaming])
+
+  useEffect(() => {
+    textareaRef.current?.focus()
+  }, [])
+
   return (
     <form onSubmit={e => { e.preventDefault(); onSend() }} className="sticky bottom-0 bg-white dark:bg-neutral-900 pt-2">
       <div className="flex items-end gap-2">
