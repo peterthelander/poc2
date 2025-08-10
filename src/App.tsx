@@ -1,22 +1,15 @@
 import React, { useRef, useState } from 'react'
 import './app.css'
 import Chat, { ChatHandle } from './components/Chat'
-import { Theme, getTheme, setTheme, applyTheme } from './lib/theme'
+import { getTheme, toggleTheme } from './lib/theme'
 import { COMMIT_SHA, BUILD_TIME } from './lib/version'
 import DebugOverlay from './components/DebugOverlay'
 
 export default function App() {
   const chatRef = useRef<ChatHandle>(null)
-  const [theme, setThemeState] = useState<Theme>(() => getTheme())
+  const [theme, setThemeState] = useState(() => getTheme())
   const [aboutOpen, setAboutOpen] = useState(false)
   const [privacyOpen, setPrivacyOpen] = useState(false)
-
-  const toggleTheme = () => {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark'
-    setThemeState(next)
-    setTheme(next)
-    applyTheme(next)
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100">
@@ -25,8 +18,12 @@ export default function App() {
           <h1 className="text-lg font-semibold">AidKit (POC2)</h1>
           <div className="flex items-center gap-2">
             <button
-              onClick={toggleTheme}
+              onClick={() => {
+                toggleTheme()
+                setThemeState(getTheme())
+              }}
               aria-label="Toggle theme"
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
               className="text-lg"
             >
               {theme === 'dark' ? '🌙' : '☀️'}
