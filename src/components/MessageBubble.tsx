@@ -12,7 +12,10 @@ export default function MessageBubble({ role, text, isStreaming }: Props) {
   const assistant = 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 rounded-bl-none after:absolute after:left-0 after:bottom-0 after:-ml-2 after:w-0 after:h-0 after:border-r-8 after:border-r-neutral-100 dark:after:border-r-neutral-800 after:border-t-8 after:border-t-transparent'
   return (
     <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
-      <div className={`${base} ${role === 'user' ? user : assistant}`}>
+      <div
+        className={`${base} ${role === 'user' ? user : assistant}`}
+        aria-live={role === 'assistant' ? 'polite' : undefined}
+      >
         {text}
         {isStreaming && (
           <span className="inline-flex ml-1 gap-1 align-bottom">
