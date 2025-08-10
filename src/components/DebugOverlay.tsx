@@ -9,7 +9,8 @@ export default function DebugOverlay() {
 
   useEffect(() => {
     const unsub = subscribe(() => setLogs([...getLogs()]))
-    return unsub
+    // Wrap the unsubscribe to discard boolean return value
+    return () => { unsub() }
   }, [])
 
   useEffect(() => {
