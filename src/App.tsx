@@ -3,6 +3,7 @@ import './app.css'
 import Chat, { ChatHandle } from './components/Chat'
 import { Theme, getTheme, setTheme, applyTheme } from './lib/theme'
 import { COMMIT_SHA, BUILD_TIME } from './lib/version'
+import DebugOverlay from './components/DebugOverlay'
 
 export default function App() {
   const chatRef = useRef<ChatHandle>(null)
@@ -59,6 +60,7 @@ export default function App() {
           <button className="underline text-blue-600">Close</button>
         </form>
       </dialog>
+      <DebugOverlay />
     </div>
   )
 }
