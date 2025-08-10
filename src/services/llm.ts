@@ -6,7 +6,10 @@ function delay(ms: number) {
   return new Promise(res => setTimeout(res, ms))
 }
 
-export async function* mockChat(prompt: string, opts?: { signal?: AbortSignal }): AsyncGenerator<ChatEvent> {
+export async function* mockChat(
+  prompt: string,
+  opts?: { signal?: AbortSignal; history?: { role: string; content: string }[]; system?: string }
+): AsyncGenerator<ChatEvent> {
   const text = 'Remember to stay calm and check for safety before giving first aid.'
   const tokens = text.split(' ')
   for (const token of tokens) {
@@ -19,11 +22,24 @@ export async function* mockChat(prompt: string, opts?: { signal?: AbortSignal })
   }
 }
 
-export async function* apiChat(prompt: string, opts?: { signal?: AbortSignal }): AsyncGenerator<ChatEvent> {
+export async function* apiChat(
+  prompt: string,
+  opts?: {
+    signal?: AbortSignal
+    history?: { role: string; content: string }[]
+    system?: string
+  }
+): AsyncGenerator<ChatEvent> {
+  const messages = [
+    opts?.system ? { role: 'system', content: opts.system } : null,
+    ...(opts?.history ?? []),
+    { role: 'user', content: prompt },
+  ].filter(Boolean) as { role: string; content: string }[]
+
   const res = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }),
+    body: JSON.stringify({ messages }),
     signal: opts?.signal,
   })
   if (!res.ok || !res.body) {
@@ -54,7 +70,10 @@ export async function* apiChat(prompt: string, opts?: { signal?: AbortSignal }):
   }
 }
 
-export function chat(prompt: string, opts?: { signal?: AbortSignal }) {
+export function chat(
+  prompt: string,
+  opts?: { signal?: AbortSignal; history?: { role: string; content: string }[]; system?: string }
+) {
   return USE_API ? apiChat(prompt, opts) : mockChat(prompt, opts)
 }
 
