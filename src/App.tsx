@@ -38,10 +38,10 @@ export default function App() {
           </div>
         </div>
       </header>
-      <main className="flex-1 mx-auto w-full max-w-[720px] px-4 pt-16 pb-4">
+      <main className="flex-1 mx-auto w-full max-w-[720px] px-4 pt-16 pb-16">
         <Chat ref={chatRef} />
       </main>
-      <footer className="text-xs text-center text-neutral-500 dark:text-neutral-400 py-4">
+      <footer className="fixed bottom-0 left-0 right-0 text-xs text-center text-neutral-500 dark:text-neutral-400 py-2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border-t">
         <button onClick={() => setAboutOpen(true)} className="underline">About</button> •{' '}
         <button onClick={() => setPrivacyOpen(true)} className="underline">Privacy</button> • v0.1
       </footer>
