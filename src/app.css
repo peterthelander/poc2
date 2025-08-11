@@ -1,5 +1,5 @@
 /* custom styles */
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; } /* iOS text sizing consistency */
 
 /* Prevent iOS zoom on focus by ensuring 16px+ controls */
 @supports (-webkit-touch-callout: none) {

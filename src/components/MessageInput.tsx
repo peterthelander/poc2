@@ -62,18 +62,20 @@ const MessageInput = forwardRef<MessageInputHandle, Props>(
       >
         <div className="flex items-end gap-2 w-full overflow-hidden">
           <div className="flex-1 min-w-0 flex flex-col">
-            <textarea
-              ref={textareaRef}
-              aria-label="Message"
-              enterKeyHint="send"
-              autoFocus
-              className="flex-1 min-w-0 resize-none rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-3 text-base md:text-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-48 overflow-y-auto"
-              value={value}
-              onChange={handleChange}
-              onKeyDown={handleKey}
-              disabled={streaming}
-              rows={1}
-            />
+            <div className="flex-1 min-w-0 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-0 ring-inset">
+              <textarea
+                ref={textareaRef}
+                aria-label="Message"
+                enterKeyHint="send"
+                autoFocus
+                className="w-full resize-none rounded-lg bg-transparent p-3 text-base md:text-lg text-neutral-900 dark:text-neutral-100 outline-none focus:outline-none focus:ring-0 appearance-none max-h-48 overflow-y-auto"
+                value={value}
+                onChange={handleChange}
+                onKeyDown={handleKey}
+                disabled={streaming}
+                rows={1}
+              />
+            </div>
             <p className="mt-1 hidden md:block text-xs text-neutral-500">
               Press Enter to send · Shift+Enter for newline
             </p>
