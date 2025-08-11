@@ -4,7 +4,7 @@ import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
 import { log } from '../lib/debug'
 import MessageBubble from './MessageBubble'
-import MessageInput from './MessageInput'
+import MessageInput, { MessageInputHandle } from './MessageInput'
 
 interface Message {
   id: string
@@ -25,12 +25,17 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
   const [streaming, setStreaming] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const controllerRef = useRef<AbortController>()
+  const skipScrollRef = useRef(false)
+  const inputRef = useRef<MessageInputHandle>(null)
 
   useImperativeHandle(ref, () => ({
     clear() {
+      skipScrollRef.current = true
       stop()
       setMessages([])
       setItem(STORAGE_KEY, JSON.stringify([]))
+      window.scrollTo({ top: 0, behavior: 'auto' })
+      inputRef.current?.focus()
     },
   }))
 
@@ -45,7 +50,12 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
 
   useEffect(() => {
     setItem(STORAGE_KEY, JSON.stringify(messages.slice(-20)))
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (skipScrollRef.current) {
+      skipScrollRef.current = false
+      return
+    }
+    if (messages.length === 0) return
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [messages])
 
   const send = async () => {
@@ -158,6 +168,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
         <div ref={bottomRef} />
       </div>
       <MessageInput
+        ref={inputRef}
         value={input}
         onChange={setInput}
         onSend={send}
