@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import { chat, systemPrompt, ERROR_TOKEN } from '../services/llm'
 import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
-import { log } from '../lib/debug'
+import { log, isDebug } from '../lib/debug'
+import { appendChunk, normalizeListBoundary } from '../lib/stream'
 import MessageBubble from './MessageBubble'
 import MessageInput, { MessageInputHandle } from './MessageInput'
 
@@ -71,27 +72,38 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
       const controller = new AbortController()
       controllerRef.current = controller
         try {
+          let debugCount = 0
           for await (const ev of chat(content, {
             signal: controller.signal,
             system: systemPrompt(),
             history,
           })) {
-          if ('token' in ev) {
-            setMessages(m =>
-              m.map(msg =>
-                msg.id === assistantMsg.id
-                  ? { ...msg, text: msg.text + ev.token }
-                  : msg
+            if ('token' in ev) {
+              if (isDebug() && debugCount < 15) {
+                log(JSON.stringify(ev.token))
+                debugCount++
+              }
+              const chunk = ev.token
+              const text =
+                chunk.startsWith('- ') || /^\d+\.\s/.test(chunk)
+                  ? normalizeListBoundary(assistantMsg.text, chunk)
+                  : appendChunk(assistantMsg.text, chunk)
+              setMessages(m =>
+                m.map(msg =>
+                  msg.id === assistantMsg.id
+                    ? { ...msg, text }
+                    : msg
+                )
               )
-            )
+              assistantMsg.text = text
+            }
           }
+        } finally {
+          setStreaming(false)
+          controllerRef.current = undefined
         }
-      } finally {
-        setStreaming(false)
-        controllerRef.current = undefined
-      }
-    } catch (err) {
-      log(err)
+      } catch (err) {
+        log(err)
       console.error(err)
     }
   }
@@ -118,19 +130,30 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
       const controller = new AbortController()
       controllerRef.current = controller
       try {
+        let debugCount = 0
         for await (const ev of chat(prev.text, {
           signal: controller.signal,
           system: systemPrompt(),
           history,
         })) {
           if ('token' in ev) {
+            if (isDebug() && debugCount < 15) {
+              log(JSON.stringify(ev.token))
+              debugCount++
+            }
+            const chunk = ev.token
+            const text =
+              chunk.startsWith('- ') || /^\d+\.\s/.test(chunk)
+                ? normalizeListBoundary(last.text, chunk)
+                : appendChunk(last.text, chunk)
             setMessages(m =>
               m.map(msg =>
                 msg.id === last.id
-                  ? { ...msg, text: msg.text + ev.token }
+                  ? { ...msg, text }
                   : msg
               )
             )
+            last.text = text
           }
         }
       } finally {
