@@ -5,3 +5,10 @@ html { -webkit-text-size-adjust: 100%; } /* iOS text sizing consistency */
 @supports (-webkit-touch-callout: none) {
   input, textarea, select, button { font-size: 16px; }
 }
+
+/* Markdown typography tweaks */
+.prose { line-height: 1.5; }
+.prose p { margin: 0.5rem 0; }
+.prose :where(h1,h2,h3){ margin: 0.5rem 0; }
+.prose :where(ul,ol){ margin: 0.5rem 0; padding-left: 1.25rem; }
+.prose :where(code){ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
