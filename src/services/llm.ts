@@ -10,12 +10,23 @@ export async function* mockChat(
   prompt: string,
   opts?: { signal?: AbortSignal; history?: { role: string; content: string }[]; system?: string }
 ): AsyncGenerator<ChatEvent> {
-  const text = 'Remember to stay calm and check for safety before giving first aid.'
-  const tokens = text.split(' ')
-  for (const token of tokens) {
+  const md = [
+    "Here’s a step-by-step guide for performing mouth-to-mouth:",
+    "",
+    "### Steps for Mouth-to-Mouth Resuscitation",
+    "1. **Ensure Safety**",
+    "   - Make sure the area is safe for both you and the victim.",
+    "2. **Check Responsiveness**",
+    "   - Tap and shout; if no response, call emergency services.",
+    "",
+    "**Disclaimer:** General first-aid guidance, not medical diagnosis.",
+  ].join("\n")
+
+  const tokens = md.match(/(\n+|\s+|[^\s]+)/g) ?? []
+  for (const t of tokens) {
     if (opts?.signal?.aborted) break
-    await delay(40 + Math.random() * 20)
-    yield { token }
+    await delay(35 + Math.random() * 20)
+    yield { token: t }
   }
   if (!opts?.signal?.aborted) {
     yield { done: true }

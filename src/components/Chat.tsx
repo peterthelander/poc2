@@ -80,7 +80,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
             setMessages(m =>
               m.map(msg =>
                 msg.id === assistantMsg.id
-                  ? { ...msg, text: msg.text + (msg.text ? ' ' : '') + ev.token }
+                  ? { ...msg, text: msg.text + ev.token }
                   : msg
               )
             )
@@ -127,7 +127,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
             setMessages(m =>
               m.map(msg =>
                 msg.id === last.id
-                  ? { ...msg, text: msg.text + (msg.text ? ' ' : '') + ev.token }
+                  ? { ...msg, text: msg.text + ev.token }
                   : msg
               )
             )
