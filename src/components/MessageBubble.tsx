@@ -1,4 +1,7 @@
 import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeSanitize from 'rehype-sanitize'
 
 interface Props {
   role: 'user' | 'assistant'
@@ -16,7 +19,46 @@ export default function MessageBubble({ role, text, isStreaming }: Props) {
         className={`${base} ${role === 'user' ? user : assistant}`}
         aria-live={role === 'assistant' ? 'polite' : undefined}
       >
-        {text}
+        {role === 'assistant' ? (
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeSanitize]}
+            className="prose prose-sm dark:prose-invert max-w-none"
+            components={{
+              p: ({ node, ...props }: any) => <p className="my-2 leading-relaxed" {...props} />,
+              ul: ({ node, ...props }: any) => <ul className="my-2 ml-5 list-disc" {...props} />,
+              ol: ({ node, ...props }: any) => <ol className="my-2 ml-5 list-decimal" {...props} />,
+              li: ({ node, ...props }: any) => <li className="my-1" {...props} />,
+              h1: (props: any) => <h1 className="text-lg font-semibold mt-3 mb-2" {...props} />,
+              h2: (props: any) => <h2 className="text-base font-semibold mt-3 mb-2" {...props} />,
+              h3: (props: any) => <h3 className="text-sm font-semibold mt-3 mb-1" {...props} />,
+              code: ({ inline, ...props }: any) =>
+                inline ? (
+                  <code
+                    className="px-1 py-0.5 rounded bg-neutral-200 dark:bg-neutral-700"
+                    {...props}
+                  />
+                ) : (
+                  <pre
+                    className="p-2 rounded bg-neutral-900 text-neutral-100 overflow-auto"
+                    {...props}
+                  />
+                ),
+              a: ({ node, ...props }: any) => (
+                <a
+                  className="underline text-blue-600"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  {...props}
+                />
+              ),
+            }}
+          >
+            {text}
+          </ReactMarkdown>
+        ) : (
+          text
+        )}
         {isStreaming && (
           <span className="inline-flex ml-1 gap-1 align-bottom">
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:-0.3s]"></span>
