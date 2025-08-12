@@ -26,9 +26,20 @@ export default function App() {
     return { key, persona }
   })
 
+  const appClass =
+    personaKey === 'friend'
+      ? 'bg-purple-50 text-neutral-900'
+      : 'bg-white text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100'
+
   return (
-    <div className="min-h-screen flex flex-col bg-white text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100">
-      <header className="fixed top-0 left-0 right-0 z-20 border-b bg-white/80 dark:bg-neutral-900/80 backdrop-blur shadow-sm">
+    <div className={`min-h-screen flex flex-col ${appClass}`}>
+      <header
+        className={
+          personaKey === 'friend'
+            ? 'fixed top-0 left-0 right-0 z-20 border-b bg-purple-50/80 backdrop-blur shadow-sm'
+            : 'fixed top-0 left-0 right-0 z-20 border-b bg-white/80 dark:bg-neutral-900/80 backdrop-blur shadow-sm'
+        }
+      >
         <div className="mx-auto flex items-center justify-between w-full max-w-[720px] px-4 py-2">
           <h1 className="text-lg font-semibold">{persona.title}</h1>
           <div className="flex items-center gap-2">
@@ -55,7 +66,13 @@ export default function App() {
       <main className="flex-1 mx-auto w-full max-w-[720px] px-4 pt-16 pb-16">
         <Chat ref={chatRef} persona={persona} personaKey={personaKey} />
       </main>
-      <footer className="fixed bottom-0 left-0 right-0 text-xs text-center text-neutral-500 dark:text-neutral-400 py-2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border-t">
+      <footer
+        className={
+          personaKey === 'friend'
+            ? 'fixed bottom-0 left-0 right-0 text-xs text-center text-neutral-500 py-2 bg-purple-50/80 backdrop-blur border-t'
+            : 'fixed bottom-0 left-0 right-0 text-xs text-center text-neutral-500 dark:text-neutral-400 py-2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border-t'
+        }
+      >
         <button onClick={() => setAboutOpen(true)} className="underline">About</button> •{' '}
         <button onClick={() => setPrivacyOpen(true)} className="underline">Privacy</button> • v0.1{' '}
         <small className="opacity-75">• {COMMIT_SHA} • {new Date(BUILD_TIME).toLocaleString()}</small>
