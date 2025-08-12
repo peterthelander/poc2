@@ -102,7 +102,3 @@ export function chat(
 ) {
   return USE_API ? apiChat(prompt, opts) : mockChat(prompt, opts)
 }
-
-export function systemPrompt(): string {
-  return 'You provide calm, step-by-step first-aid guidance. You are not a medical diagnosis.'
-}
