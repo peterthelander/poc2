@@ -4,6 +4,7 @@ import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
 import { log, isDebug } from '../lib/debug'
 import { appendChunk, normalizeListBoundary } from '../lib/stream'
+import { logEvent } from '../lib/remoteLog'
 import MessageBubble from './MessageBubble'
 import MessageInput, { MessageInputHandle } from './MessageInput'
 import { Persona, PersonaKey } from '../personas'
@@ -73,6 +74,7 @@ const Chat = forwardRef<ChatHandle, Props>(({ persona, personaKey }, ref) => {
       const assistantMsg: Message = { id: uuid(), role: 'assistant', text: '', ts: Date.now() }
       setMessages(m => [...m, userMsg, assistantMsg])
       setInput('')
+      logEvent({ personaId: persona.id, role: 'user', text: content })
       setStreaming(true)
       const controller = new AbortController()
       controllerRef.current = controller
@@ -107,10 +109,11 @@ const Chat = forwardRef<ChatHandle, Props>(({ persona, personaKey }, ref) => {
           setStreaming(false)
           controllerRef.current = undefined
         }
+        logEvent({ personaId: persona.id, role: 'assistant', text: assistantMsg.text })
       } catch (err) {
         log(err)
-      console.error(err)
-    }
+        console.error(err)
+      }
   }
 
   const retry = async () => {
@@ -165,6 +168,7 @@ const Chat = forwardRef<ChatHandle, Props>(({ persona, personaKey }, ref) => {
         setStreaming(false)
         controllerRef.current = undefined
       }
+      logEvent({ personaId: persona.id, role: 'assistant', text: last.text })
     } catch (err) {
       log(err)
       console.error(err)
