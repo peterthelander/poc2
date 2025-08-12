@@ -1,7 +1,7 @@
 import { uuid } from './uuid'
 
 export function isLoggingEnabled() {
-  return new URLSearchParams(location.search).has('log')
+  return new URLSearchParams(location.search).get('log') === '1'
 }
 
 export function hasLogConsent() {

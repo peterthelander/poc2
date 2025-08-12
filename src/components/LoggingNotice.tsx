@@ -7,7 +7,7 @@ export default function LoggingNotice() {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-100 text-gray-800 text-sm p-2 flex items-center justify-center gap-2">
       <span className="text-center">
-        Logging is ON so a parent can review messages for this session. No personal data beyond message text is intentionally collected.
+        Logging is ON so a parent can review messages for this session.
       </span>
       <button
         className="underline"
