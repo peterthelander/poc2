@@ -2,17 +2,19 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeSanitize from 'rehype-sanitize'
+import { Persona } from '../personas'
 
 interface Props {
   role: 'user' | 'assistant'
   text: string
   isStreaming?: boolean
+  persona: Persona
 }
 
-export default function MessageBubble({ role, text, isStreaming }: Props) {
+export default function MessageBubble({ role, text, isStreaming, persona }: Props) {
   const base = "relative max-w-[80%] md:max-w-[70%] px-4 py-2 text-sm md:text-base rounded-2xl shadow after:content-['']"
-  const user = 'whitespace-pre-wrap bg-blue-600 text-white rounded-br-none after:absolute after:right-0 after:bottom-0 after:-mr-2 after:w-0 after:h-0 after:border-l-8 after:border-l-blue-600 after:border-t-8 after:border-t-transparent'
-  const assistant = 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 rounded-bl-none after:absolute after:left-0 after:bottom-0 after:-ml-2 after:w-0 after:h-0 after:border-r-8 after:border-r-neutral-100 dark:after:border-r-neutral-800 after:border-t-8 after:border-t-transparent'
+  const user = persona.bubbles.user
+  const assistant = persona.bubbles.assistant
   return (
     <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
       <div

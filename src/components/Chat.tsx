@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { chat, systemPrompt, ERROR_TOKEN } from '../services/llm'
+import { chat, ERROR_TOKEN } from '../services/llm'
 import { getItem, setItem } from '../lib/storage'
 import { uuid } from '../lib/uuid'
 import { log, isDebug } from '../lib/debug'
 import { appendChunk, normalizeListBoundary } from '../lib/stream'
 import MessageBubble from './MessageBubble'
 import MessageInput, { MessageInputHandle } from './MessageInput'
+import { Persona, PersonaKey } from '../personas'
 
 interface Message {
   id: string
@@ -14,13 +15,17 @@ interface Message {
   ts: number
 }
 
-const STORAGE_KEY = 'poc2.chat'
-
 export interface ChatHandle {
   clear: () => void
 }
 
-const Chat = forwardRef<ChatHandle>((_, ref) => {
+interface Props {
+  persona: Persona
+  personaKey: PersonaKey
+}
+
+const Chat = forwardRef<ChatHandle, Props>(({ persona, personaKey }, ref) => {
+  const STORAGE_KEY = `poc2.chat.${personaKey}`
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -75,7 +80,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
           let debugCount = 0
           for await (const ev of chat(content, {
             signal: controller.signal,
-            system: systemPrompt(),
+            system: persona.systemPrompt,
             history,
           })) {
             if ('token' in ev) {
@@ -133,7 +138,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
         let debugCount = 0
         for await (const ev of chat(prev.text, {
           signal: controller.signal,
-          system: systemPrompt(),
+          system: persona.systemPrompt,
           history,
         })) {
           if ('token' in ev) {
@@ -177,6 +182,7 @@ const Chat = forwardRef<ChatHandle>((_, ref) => {
             role={m.role}
             text={m.text}
             isStreaming={streaming && i === messages.length - 1 && m.role === 'assistant'}
+            persona={persona}
           />
         ))}
         {!streaming &&
