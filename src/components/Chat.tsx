@@ -196,17 +196,18 @@ const Chat = forwardRef<ChatHandle, Props>(({ persona, personaKey }, ref) => {
           )}
         <div ref={bottomRef} />
       </div>
-      <MessageInput
-        ref={inputRef}
-        value={input}
-        onChange={setInput}
-        onSend={send}
-        onStop={stop}
-        streaming={streaming}
-      />
-    </div>
-  )
-})
+        <MessageInput
+          ref={inputRef}
+          value={input}
+          onChange={setInput}
+          onSend={send}
+          onStop={stop}
+          streaming={streaming}
+          personaKey={personaKey}
+        />
+      </div>
+    )
+  })
 
 Chat.displayName = 'Chat'
 

@@ -25,14 +25,10 @@ export default function App() {
     document.title = persona.title
     return { key, persona }
   })
-
-  const appClass =
-    personaKey === 'friend'
-      ? 'bg-purple-50 text-neutral-900'
-      : 'bg-white text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100'
-
   return (
-    <div className={`min-h-screen flex flex-col ${appClass}`}>
+    <div
+      className={`min-h-screen flex flex-col text-neutral-900 dark:text-neutral-100 ${persona.bgLight} ${persona.bgDark}`}
+    >
       <header
         className={
           personaKey === 'friend'

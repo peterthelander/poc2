@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import { PersonaKey } from '../personas'
 
 interface Props {
   value: string
@@ -6,13 +7,14 @@ interface Props {
   onSend: () => void
   onStop: () => void
   streaming: boolean
+  personaKey: PersonaKey
 }
 export interface MessageInputHandle {
   focus: () => void
 }
 
 const MessageInput = forwardRef<MessageInputHandle, Props>(
-  ({ value, onChange, onSend, onStop, streaming }, ref) => {
+  ({ value, onChange, onSend, onStop, streaming, personaKey }, ref) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     useImperativeHandle(ref, () => ({
@@ -91,7 +93,11 @@ const MessageInput = forwardRef<MessageInputHandle, Props>(
             </button>
           )}
         </div>
-        <p className="mt-2 text-center text-xs text-neutral-500 dark:text-neutral-400">Not medical advice. In an emergency, call local services.</p>
+        {personaKey === 'aidkit' && (
+          <p className="mt-2 text-center text-xs text-neutral-500 dark:text-neutral-400">
+            Not medical advice. In an emergency, call local services.
+          </p>
+        )}
       </form>
     )
   }
