@@ -1,11 +1,11 @@
 import { uuid } from './uuid'
 
-export function isLoggingEnabled() {
-  return new URLSearchParams(location.search).get('log') === '1'
-}
-
 export function hasLogConsent() {
   return localStorage.getItem('poc2.logConsent') === 'yes'
+}
+
+export function revokeConsent() {
+  localStorage.removeItem('poc2.logConsent')
 }
 
 export function getSessionId(): string {
@@ -17,7 +17,7 @@ export function getSessionId(): string {
 }
 
 export async function logEvent(evt: { personaId: string; role: 'user' | 'assistant'; text: string }) {
-  if (!isLoggingEnabled() || !hasLogConsent()) return
+  if (!hasLogConsent()) return
   const truncated = evt.text.slice(0, 4000)
   const body = {
     ts: Date.now(),
