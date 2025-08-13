@@ -10,7 +10,7 @@ import LoggingNotice from './components/LoggingNotice'
 import { getPersona } from './personas'
 import { getItem, setItem } from './lib/storage'
 import { isDebug } from './lib/debug'
-import { isLoggingEnabled, hasLogConsent } from './lib/remoteLog'
+import { hasLogConsent } from './lib/remoteLog'
 
 export default function App() {
   const chatRef = useRef<ChatHandle>(null)
@@ -83,9 +83,29 @@ export default function App() {
             <a href="?persona=friend&debug=1" className="underline mr-2">
               Friend
             </a>
-            <span className="inline-block border px-1 rounded text-[10px]">
-              Logging: {isLoggingEnabled() && hasLogConsent() ? 'ON' : 'OFF'}
+            <span className="inline-block border px-1 rounded text-[10px] mr-2">
+              Logging: {hasLogConsent() ? 'ON' : 'OFF'}
             </span>
+            <a
+              href="#"
+              className="underline mr-2"
+              onClick={() => {
+                localStorage.setItem('poc2.logConsent', 'yes')
+                location.reload()
+              }}
+            >
+              Allow logging
+            </a>
+            <a
+              href="#"
+              className="underline"
+              onClick={() => {
+                localStorage.setItem('poc2.logConsent', 'no')
+                location.reload()
+              }}
+            >
+              Disable logging
+            </a>
           </div>
         )}
       </footer>

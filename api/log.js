@@ -3,7 +3,7 @@ const MAX_LEN = 1800;
 module.exports = async (req, res) => {
   try {
     if (req.method === 'GET') {
-      res.status(200).json({ ok: true, hasWebhook: !!process.env.WEBHOOK_URL });
+      res.status(200).json({ ok: true, hasWebhook: !!process.env.WEBHOOK_URL, consentRequired: true });
       return;
     }
     if (req.method !== 'POST') {
