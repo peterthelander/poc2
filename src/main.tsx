@@ -4,6 +4,8 @@ import './index.css'
 import App from './App'
 import { initTheme } from './lib/theme'
 import { isDebug, log } from './lib/debug'
+import { COMMIT_SHA } from './lib/version'
+import { startAutoUpdate } from './lib/autoUpdate'
 
 if (isDebug()) {
   window.addEventListener('error', e => log(`error: ${e.message}`))
@@ -13,6 +15,7 @@ if (isDebug()) {
 }
 
 initTheme()
+startAutoUpdate(COMMIT_SHA)
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
